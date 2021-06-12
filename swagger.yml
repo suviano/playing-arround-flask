@@ -1,0 +1,120 @@
+openapi: "3.0.2"
+info:
+  title: Account management
+  version: "1.0"
+servers:
+  - url: http://???/v1
+
+components:
+  schemas:
+    account:
+      type: object
+      properties:
+        saldo:
+          type: number
+          format: double
+        limiteSaqueDiario:
+          type: number
+          format: double
+        flagAtivo:
+          type: boolean
+        tipoConta:
+          type: integer
+    create_person:
+      type: object
+      properties:
+        nome:
+          type: string
+        cpf:
+          type: string
+        dataNascimento:
+          type: string
+          format: date
+    idPessoa:
+      allOf:
+        - $ref: '#/components/schemas/create_person'
+        - properties:
+            id:
+              type: integer
+    account_existing_person:
+      required:
+        - idPessoa
+        - saldo
+        - limiteSaqueDiario
+        - flagAtivo
+        - tipoConta
+      allOf:
+        - $ref: '#/components/schemas/account'
+        - properties:
+            idPessoa:
+              type: integer
+    account_new_person:
+      required:
+        - saldo
+        - limiteSaqueDiario
+        - flagAtivo
+        - tipoConta
+        - nome
+        - cpf
+        - dataNascimento
+      allOf:
+        - $ref: '#/components/schemas/account'
+        - $ref: '#/components/schemas/create_person'
+
+
+paths:
+  /account:
+    # Implementar path que realiza a criação de uma conta
+    post:
+      summary: criação de uma conta, tambem cria pessoa caso informações sejam passadas
+      requestBody:
+        description: |
+          Informações da conta
+          Caso pessoa nao existe a hava os dados para criação esse será feito
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/account_new_person'
+                - $ref: '#/components/schemas/account_existing_person'
+      responses:
+        "201":
+          description: CREATED
+        "400":
+          description: BAD_REQUEST
+  /account/<account_id>/deposit/:
+    # Implementar path que realiza operação de depósito em uma conta
+    post:
+      summary: depósito em uma conta
+      responses:
+        "201":
+          description: CREATED
+  /account/<account_id>/balance/:
+    # Implementar path que realiza operação de consulta de saldo em determinada conta
+    get:
+      summary: consulta de saldo em determinada conta
+      responses:
+        "200":
+          description: OK
+  /account/<account_id>/withdrawal:
+    # Implementar path que realiza operação de saque em uma conta
+    patch:
+      summary: saque em uma conta
+      responses:
+        "200":
+          description: OK
+  /account/<account_id>/block:
+    # Implementar path que realiza o bloqueio de uma conta
+    post:
+      summary: bloqueio de uma conta
+      responses:
+        "200":
+          description: OK
+  /account/<account_id>/transactions:
+    # Implementar path que recupera o extrato de transações de uma conta
+    get:
+      description: <???>
+      summary: extrato de transacoes feita por uma conta
+      responses:
+        "200":
+          description: OK
