@@ -32,7 +32,7 @@ components:
           format: date
     idPessoa:
       allOf:
-        - $ref: '#/components/schemas/create_person'
+        - $ref: "#/components/schemas/create_person"
         - properties:
             id:
               type: integer
@@ -44,7 +44,7 @@ components:
         - flagAtivo
         - tipoConta
       allOf:
-        - $ref: '#/components/schemas/account'
+        - $ref: "#/components/schemas/account"
         - properties:
             idPessoa:
               type: integer
@@ -58,15 +58,30 @@ components:
         - cpf
         - dataNascimento
       allOf:
-        - $ref: '#/components/schemas/account'
-        - $ref: '#/components/schemas/create_person'
-
-
+        - $ref: "#/components/schemas/account"
+        - $ref: "#/components/schemas/create_person"
+    deposit:
+      properties:
+        value:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+    account_blocked:
+      properties:
+        error:
+          type: string
+          example: Conta esta bloqueada
+    deposit_minimum_value:
+      properties:
+        error:
+          type: string
+          example: |
+            O deposito não pode ser usado para saque na conta. Não e permido valores negativos
 paths:
   /account:
     # Implementar path que realiza a criação de uma conta
     post:
-      summary: criação de uma conta, tambem cria pessoa caso informações sejam passadas
+      summary: Criação de uma conta, tambem cria pessoa caso informações sejam passadas
       requestBody:
         description: |
           Informações da conta
@@ -75,24 +90,51 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/account_new_person'
-                - $ref: '#/components/schemas/account_existing_person'
+                - $ref: "#/components/schemas/account_new_person"
+                - $ref: "#/components/schemas/account_existing_person"
+      responses:
+        "201":
+          description: CREATED
+          headers:
+            Content-Localtion:
+              schema:
+                type: string
+              description: Path do recurso criado
+        "400":
+          description: BAD_REQUEST
+        "500":
+          description: INTERNAL_SERVER_ERROR
+  /account/<account_id>/deposit/:
+    # Implementar path que realiza operação de depósito em uma conta
+    post:
+      summary: Executa uma transação para depósito
+      requestBody:
+        description: Modelo com valor do depósito
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deposit"
       responses:
         "201":
           description: CREATED
         "400":
           description: BAD_REQUEST
-  /account/<account_id>/deposit/:
-    # Implementar path que realiza operação de depósito em uma conta
-    post:
-      summary: depósito em uma conta
-      responses:
-        "201":
-          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/deposit_minimum_value"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/account_blocked"
+        "404":
+          description: NOT_FOUND
   /account/<account_id>/balance/:
     # Implementar path que realiza operação de consulta de saldo em determinada conta
     get:
-      summary: consulta de saldo em determinada conta
+      summary: Consulta de saldo em determinada conta
       responses:
         "200":
           description: OK

@@ -3,6 +3,7 @@ import os
 import uuid
 
 import boto3
+from boto3.dynamodb.conditions import Key
 import botocore
 
 
@@ -74,3 +75,27 @@ class DynamoResource:
         except botocore.exceptions.ClientError as error:
             self.handle_error(error)
         return resource_id
+
+    def find_by_id(self, table_name: str, keys: dict):
+        table = self.resource.Table(table_name)
+
+        hash_expression = Key(keys["hash_key"]).eq(keys["hash_value"])
+        sort_key = keys.get("sort_key")
+        keys_expression = hash_expression
+        if sort_key:
+            sort_expression = Key(sort_key).eq(keys["sort_value"])
+            keys_expression = hash_expression & sort_expression
+
+        try:
+            return table.query(KeyConditionExpression=keys_expression)
+        except botocore.exceptions.ClientError as error:
+            self.handle_error(error)
+
+    def find_one_by_id(self, table_name: str, keys: dict):
+        resp = self.find_by_id(table_name, keys)
+        # raise if found more than one
+        return resp["Items"][0] if resp["Items"] else None
+
+    def update_item(self, table_name: str, keys: dict, values: dict):
+        table = self.resource.Table(table_name)
+        table.update_item(Key=Key)

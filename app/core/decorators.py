@@ -1,7 +1,7 @@
 import functools
 from http import HTTPStatus
 
-from flask import abort, request, make_response, jsonify
+from flask import abort, jsonify, make_response, request
 
 
 def json_consumer(f):

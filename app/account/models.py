@@ -28,6 +28,16 @@ class Account:
         }
         return DynamoResource().save_new(cls.table_name, payload)
 
+    @classmethod
+    def find_one_by_id(cls, account_id: str):
+        return DynamoResource().find_one_by_id(
+            cls.table_name, {"hash_key": "id", "hash_value": account_id}
+        )
+
+    @classmethod
+    def reposity_into(cls, account_id: str, value: d.Decimal):
+        pass
+
 
 class Person:
     """
