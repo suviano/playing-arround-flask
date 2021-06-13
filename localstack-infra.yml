@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+    aws-local-infra:
+        image: localstack/localstack:0.12.12
+        container_name: aws-local-infra
+        environment:
+          - SERVICES=dynamodb
+          - DATA_DIR=/opt/localstack_data
+        ports:
+          - "4566:4566"
+        volumes:
+          - "./data/dynamodb:/opt/localstack_data/dynamodb"
