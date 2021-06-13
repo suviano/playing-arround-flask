@@ -1,10 +1,10 @@
 import logging
 import os
-import uuid
 
 import boto3
-from boto3.dynamodb.conditions import Key
 import botocore
+from boto3.dynamodb.conditions import Key
+from flask import abort
 
 
 class DynamoResource:
@@ -20,6 +20,7 @@ class DynamoResource:
                 }
             )
         self.resource = boto3.resource("dynamodb", **kwargs)
+        self.client = boto3.client("dynamodb", **kwargs)
 
     @classmethod
     def error_help_strings(cls, error_code):
@@ -62,30 +63,29 @@ class DynamoResource:
             raise error
         raise Exception()
 
-    def save_new(self, table_name: str, data: dict, primary_key: str = "id"):
-        table = self.resource.Table(table_name)
-        if not data.get(primary_key):
-            resource_id = str(uuid.uuid4())
-            data[primary_key] = resource_id
-        else:
-            resource_id = data[primary_key]
+    def table_resource(self, table_name):
+        return self.resource.Table(table_name)
 
+    def save(self, table_name: str, data: dict):
+        table = self.resource.Table(table_name)
         try:
             table.put_item(Item=data)
         except botocore.exceptions.ClientError as error:
             self.handle_error(error)
-        return resource_id
+
+    def __handle_key_expression(self, keys_map: dict):
+        hash_expression = Key(keys_map["hash_key"]).eq(keys_map["hash_value"])
+        sort_key = keys_map.get("sort_key")
+        keys_expression = hash_expression
+        if sort_key:
+            sort_expression = Key(sort_key).eq(keys_map["sort_value"])
+            keys_expression = hash_expression & sort_expression
+        return keys_expression
 
     def find_by_id(self, table_name: str, keys: dict):
         table = self.resource.Table(table_name)
 
-        hash_expression = Key(keys["hash_key"]).eq(keys["hash_value"])
-        sort_key = keys.get("sort_key")
-        keys_expression = hash_expression
-        if sort_key:
-            sort_expression = Key(sort_key).eq(keys["sort_value"])
-            keys_expression = hash_expression & sort_expression
-
+        keys_expression = self.__handle_key_expression(keys)
         try:
             return table.query(KeyConditionExpression=keys_expression)
         except botocore.exceptions.ClientError as error:
@@ -93,9 +93,26 @@ class DynamoResource:
 
     def find_one_by_id(self, table_name: str, keys: dict):
         resp = self.find_by_id(table_name, keys)
-        # raise if found more than one
+        # raise exception if found more than one
         return resp["Items"][0] if resp["Items"] else None
 
-    def update_item(self, table_name: str, keys: dict, values: dict):
+    def update_item(
+        self,
+        table_name: str,
+        keys: dict,
+        update_expression: str,
+        expression_attr_name,
+        expression_attr_value,
+    ):
         table = self.resource.Table(table_name)
-        table.update_item(Key=Key)
+        try:
+            table.update_item(
+                Key=keys,
+                UpdateExpression=update_expression,
+                ExpressionAttributeNames=expression_attr_name,
+                ExpressionAttributeValues=expression_attr_value,
+                ReturnValues="UPDATED_NEW",
+            )
+        except botocore.exceptions.ClientError as error:
+            if error.response["Error"]["Code"] == "ValidationException":
+                abort(500)

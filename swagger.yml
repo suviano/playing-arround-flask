@@ -77,6 +77,11 @@ components:
           type: string
           example: |
             O deposito não pode ser usado para saque na conta. Não e permido valores negativos
+    account_balance:
+      properties:
+        balance:
+          type: string
+          example: R$ xxxx.xxx
 paths:
   /account:
     # Implementar path que realiza a criação de uma conta
@@ -96,15 +101,15 @@ paths:
         "201":
           description: CREATED
           headers:
-            Content-Localtion:
+            Content-Location:
               schema:
                 type: string
-              description: Path do recurso criado
+              example: /account/<ACCOUNT_ID>
         "400":
           description: BAD_REQUEST
         "500":
           description: INTERNAL_SERVER_ERROR
-  /account/<account_id>/deposit/:
+  /account/<account_id>/deposit:
     # Implementar path que realiza operação de depósito em uma conta
     post:
       summary: Executa uma transação para depósito
@@ -117,6 +122,11 @@ paths:
       responses:
         "201":
           description: CREATED
+          headers:
+            Content-Location:
+              schema:
+                type: string
+              example: /account/<ACCOUNT_ID>/transaction/<TRANSACTION_ID>
         "400":
           description: BAD_REQUEST
           content:
@@ -138,6 +148,10 @@ paths:
       responses:
         "200":
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/account_balance"
   /account/<account_id>/withdrawal:
     # Implementar path que realiza operação de saque em uma conta
     patch:
