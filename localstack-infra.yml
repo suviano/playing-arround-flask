@@ -5,7 +5,7 @@ services:
         image: localstack/localstack:0.12.12
         container_name: aws-local-infra
         environment:
-          - SERVICES=dynamodb
+          - SERVICES=dynamodb,cloudformation
           - DATA_DIR=/opt/localstack_data
         ports:
           - "4566:4566"

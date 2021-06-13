@@ -20,4 +20,4 @@ class CreateAccountSchema(ma.Schema):
         required=True, data_key="limiteSaqueDiario"
     )
     account_type = ma.fields.Integer(required=True, data_key="tipoConta")
-    person_id = ma.fields.Int(data_key="idPessoa")
+    person_id = ma.fields.Str(data_key="idPessoa")

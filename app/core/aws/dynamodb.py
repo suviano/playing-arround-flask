@@ -8,7 +8,7 @@ import botocore
 
 class DynamoResource:
     def __init__(self):
-        localstack = os.getenv("LOCALSTACK")
+        localstack = os.environ["LOCALSTACK"]
         kwargs = {}
         if localstack:
             kwargs.update(
@@ -22,6 +22,8 @@ class DynamoResource:
 
     @classmethod
     def error_help_strings(cls, error_code):
+        # Got this map from the NoSQL Workbench from aws (Shame it's not in already in the library)
+        # https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.html
         return {
             "InternalServerError": "Internal Server Error, generally safe to retry with exponential back-off",
             "ProvisionedThroughputExceededException": (
@@ -54,7 +56,8 @@ class DynamoResource:
                 error_message=error_message,
             )
         )
-        if os.getenv("FLASK_ENV") == "development":
+        env_name = os.environ["FLASK_ENV"]
+        if env_name == "development":
             raise error
         raise Exception()
 
