@@ -79,9 +79,17 @@ components:
             O deposito não pode ser usado para saque na conta. Não e permido valores negativos
     account_balance:
       properties:
-        balance:
+        saldo:
           type: string
           example: R$ xxxx.xxx
+        bloqueado:
+          type: boolean
+          example: true
+    account_not_found:
+      properties:
+        error:
+          type: string
+          example: Account not found
 paths:
   /account:
     # Implementar path que realiza a criação de uma conta
@@ -99,16 +107,16 @@ paths:
                 - $ref: "#/components/schemas/account_existing_person"
       responses:
         "201":
-          description: CREATED
+          description: sucesso
           headers:
             Content-Location:
               schema:
                 type: string
               example: /account/<ACCOUNT_ID>
         "400":
-          description: BAD_REQUEST
+          description: requisição invalida
         "500":
-          description: INTERNAL_SERVER_ERROR
+          description: ocorreu um erro no servidor
   /account/<account_id>/deposit:
     # Implementar path que realiza operação de depósito em uma conta
     post:
@@ -121,51 +129,67 @@ paths:
               $ref: "#/components/schemas/deposit"
       responses:
         "201":
-          description: CREATED
+          description: sucesso
           headers:
             Content-Location:
               schema:
                 type: string
               example: /account/<ACCOUNT_ID>/transaction/<TRANSACTION_ID>
         "400":
-          description: BAD_REQUEST
+          description: deposito nao pode ser ZERO ou ter valor negativo
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/deposit_minimum_value"
         "403":
-          description: FORBIDDEN
+          description: conta bloqueada
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/account_blocked"
         "404":
-          description: NOT_FOUND
+          description: conta não encontrada
+        "500":
+          description: ocorreu um erro no servidor
   /account/<account_id>/balance/:
     # Implementar path que realiza operação de consulta de saldo em determinada conta
     get:
       summary: Consulta de saldo em determinada conta
       responses:
         "200":
-          description: OK
+          description: sucesso
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/account_balance"
-  /account/<account_id>/withdrawal:
+        "404":
+          description: conta não encontrada
+        "500":
+          description: ocorreu um erro no servidor
+  /account/<account_id>/withdraw:
     # Implementar path que realiza operação de saque em uma conta
-    patch:
+    post:
       summary: saque em uma conta
       responses:
         "200":
           description: OK
+        "403":
+          description: Operação não foi autorizada
+        "500":
+          description: ocorreu um erro no servidor
   /account/<account_id>/block:
     # Implementar path que realiza o bloqueio de uma conta
-    post:
+    patch:
       summary: bloqueio de uma conta
       responses:
-        "200":
-          description: OK
+        "204":
+          description: operação concluida com sucesso
+        "400":
+          description: requisição invalida
+        "404":
+          description: conta nao encontrada
+        "500":
+          description: ocorreu um erro no servidor
   /account/<account_id>/transactions:
     # Implementar path que recupera o extrato de transações de uma conta
     get:
@@ -174,3 +198,5 @@ paths:
       responses:
         "200":
           description: OK
+        "500":
+          description: ocorreu um erro no servidor

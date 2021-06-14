@@ -66,7 +66,7 @@ class DynamoResource:
     def table_resource(self, table_name):
         return self.resource.Table(table_name)
 
-    def save(self, table_name: str, data: dict):
+    def add(self, table_name: str, data: dict):
         table = self.resource.Table(table_name)
         try:
             table.put_item(Item=data)

@@ -1,5 +1,4 @@
 import unittest
-import uuid
 from unittest import mock
 
 from botocore.exceptions import ClientError
@@ -20,7 +19,7 @@ class TestDynamodbResource(unittest.TestCase):
 
         table_name = "test-table"
         save_data = {"just": "push the lets to see if will swing a bit", "id": "test"}
-        DynamoResource().save(
+        DynamoResource().add(
             table_name,
             {**save_data},
         )
@@ -48,7 +47,7 @@ class TestDynamodbResource(unittest.TestCase):
 
         save_data = {"just": "push the lets to see if will swing a bit", "id": "test"}
         with self.assertRaises(ClientError):
-            DynamoResource().save(
+            DynamoResource().add(
                 "test-table",
                 {**save_data},
             )
@@ -78,7 +77,7 @@ class TestDynamodbResource(unittest.TestCase):
 
         save_data = {"just": "push the lets to see if will swing a bit", "id": "test"}
         with self.assertRaises(Exception):
-            DynamoResource().save(
+            DynamoResource().add(
                 "test-table",
                 {**save_data},
             )
