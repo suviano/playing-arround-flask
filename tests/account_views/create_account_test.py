@@ -1,9 +1,10 @@
-import unittest
-import pytest
-import decimal as d
 import datetime as dt
+import decimal as d
+import unittest
 from http import HTTPStatus
 from unittest import mock
+
+import pytest
 
 
 @pytest.mark.usefixtures("client")
