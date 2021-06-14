@@ -1,7 +1,8 @@
 import unittest
-import pytest
 from http import HTTPStatus
 from unittest import mock
+
+import pytest
 
 
 @pytest.mark.usefixtures("client")

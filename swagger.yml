@@ -92,7 +92,6 @@ components:
           example: Account not found
 paths:
   /account:
-    # Implementar path que realiza a criação de uma conta
     post:
       summary: Criação de uma conta, tambem cria pessoa caso informações sejam passadas
       requestBody:
@@ -118,9 +117,15 @@ paths:
         "500":
           description: ocorreu um erro no servidor
   /account/<account_id>/deposit:
-    # Implementar path que realiza operação de depósito em uma conta
     post:
       summary: Executa uma transação para depósito
+      parameters:
+        - name: "account_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: uuid
       requestBody:
         description: Modelo com valor do depósito
         content:
@@ -152,9 +157,15 @@ paths:
         "500":
           description: ocorreu um erro no servidor
   /account/<account_id>/balance/:
-    # Implementar path que realiza operação de consulta de saldo em determinada conta
     get:
       summary: Consulta de saldo em determinada conta
+      parameters:
+        - name: "account_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: uuid
       responses:
         "200":
           description: sucesso
@@ -167,9 +178,15 @@ paths:
         "500":
           description: ocorreu um erro no servidor
   /account/<account_id>/withdraw:
-    # Implementar path que realiza operação de saque em uma conta
     post:
       summary: saque em uma conta
+      parameters:
+        - name: "account_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: uuid
       responses:
         "200":
           description: OK
@@ -178,9 +195,15 @@ paths:
         "500":
           description: ocorreu um erro no servidor
   /account/<account_id>/block:
-    # Implementar path que realiza o bloqueio de uma conta
     patch:
       summary: bloqueio de uma conta
+      parameters:
+        - name: "account_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: uuid
       responses:
         "204":
           description: operação concluida com sucesso
@@ -191,12 +214,58 @@ paths:
         "500":
           description: ocorreu um erro no servidor
   /account/<account_id>/transactions:
-    # Implementar path que recupera o extrato de transações de uma conta
     get:
-      description: <???>
+      description: extrato das transações da conta
       summary: extrato de transacoes feita por uma conta
+      parameters:
+        - name: "account_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: uuid
+        - name: "begin-date"
+          in: "query"
+          required: false
+          example: 2021-06-13T20:14:29.058087
+          schema:
+            type: "string"
+            format: date-time
+        - name: "end-date"
+          in: "query"
+          required: false
+          example: 2021-06-13T20:14:40.058087
+          schema:
+            type: "string"
+            format: date-time
+        - name: next-page-cursor
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         "200":
           description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  items:
+                    type: object
+                    properties:
+                      dataTransacao:
+                        type: string
+                        format: date-time
+                      idConta:
+                        type: string
+                        format: uuid
+                      idTransacao:
+                        type: string
+                        format: uuid
+                      valor:
+                        type: number
+                        format: double
+                  nextCursor:
+                    type: string
         "500":
           description: ocorreu um erro no servidor

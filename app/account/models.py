@@ -1,8 +1,8 @@
 import datetime as dt
 import decimal as d
 import uuid
-from http import HTTPStatus
 from dataclasses import dataclass
+from http import HTTPStatus
 
 import botocore
 from boto3.dynamodb.conditions import Key
@@ -188,18 +188,32 @@ class Transaction:
 
     @classmethod
     def find_by_account_id(
-        cls, account_id: str, begin_date: dt.datetime, end_date: dt.datetime
+        cls,
+        account_id: str,
+        begin_date: dt.datetime = None,
+        end_date: dt.datetime = None,
+        next_cursor: str = None,
     ):
         dynamodb_resource = DynamoResource()
         try:
             index = TransactionIndex.datetime
-            key_expression = Key(index.hash_key).eq(account_id) & Key(
-                index.sort_key
-            ).between(begin_date.isoformat(), end_date.isoformat())
-            return cls.paginated_query(
-                dynamodb_resource.table_resource(cls.table_name),
-                key_expression,
-                index.name,
+            key_expression = Key(index.hash_key).eq(account_id)
+            if begin_date and end_date:
+                key_expression = key_expression & Key(index.sort_key).between(
+                    begin_date.isoformat(), end_date.isoformat()
+                )
+            elif begin_date:
+                key_expression = key_expression & Key(index.sort_key).gte(
+                    begin_date.isoformat()
+                )
+            elif end_date:
+                key_expression = key_expression & Key(index.sort_key).lt(
+                    end_date.isoformat()
+                )
+
+            return dynamodb_resource.table_resource(cls.table_name).query(
+                KeyConditionExpression=key_expression,
+                IndexName=index.name
             )
         except botocore.exceptions.ClientError as error:
             dynamodb_resource.handle_error(error)

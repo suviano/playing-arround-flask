@@ -16,7 +16,9 @@ For the project code control the lint, tests and formatter (and other things) ar
 To start dynamodb install docker(do that thing to run without sudo) and docker-compose
 1. Run `docker-compose -f localstack-infra.yml -d`
 2. Run `docker-compose -f localstack-infra.yml logs -f` the message `aws-local-infra    | Ready.` should appear.
-3. TODO cloud formation things to make the databases
+3. TODO use the file cloudformation file `Account_cf_template.json` to created the database and indexes
+
+> TODO `aws --endpoint-override=http://localhost:4566 cloudformation ??? Account_cf_template.json`
 
 1. Create a virtualenv and start it `virtualenv -p python3 venv` and activate it `source venv/bin/activate`
 2. install de dependencies `pip install -r requirements.dev.txt`

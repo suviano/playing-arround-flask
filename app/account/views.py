@@ -8,7 +8,7 @@ from flask import Blueprint, abort, jsonify, make_response, request
 
 from app.account import models
 from app.account import serializers as ser
-from app.core.decorators import json_consumer
+from app.core.decorators import json_consumer, query_to_json
 
 bp = Blueprint("account", __name__)
 
@@ -107,6 +107,7 @@ def get_balance(account_id: str, account: dict):
 @bp.route("/<string:account_id>/block", methods=["PATCH"])
 @json_consumer
 def block_account(account_id: str):
+    """This endpoint does not use the `get_account_id` because it would make an unnecessary request to the database"""
     payload = ser.BlockAccountSchema().loads(request.data)
     models.Account.block(account_id, payload["block"])
     return "", HTTPStatus.NO_CONTENT
@@ -141,3 +142,12 @@ def withdraw(account_id: str, account: str):
     return register_new_transaction(
         account_id, transaction_date, withdraw_data["value"] * -1
     )
+
+
+@bp.route("<string:account_id>/transactions", methods=["GET"])
+@get_account_id("account_id")
+@query_to_json(ser.ListTransactionQuerySchema)
+def list_transactions(account_id, account, queries):
+    # TODO pagination untested
+    resp = models.Transaction.find_by_account_id(account_id, **queries)
+    return ser.ListTransactionsResponseSchema().dump(resp)

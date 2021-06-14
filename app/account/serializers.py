@@ -63,3 +63,24 @@ class WithdrawSchema(ma.Schema):
     def post_load(self, data, **_):
         raise_for_negative_or_zero_value(data["value"])
         return data
+
+
+class ListTransactionQuerySchema(ma.Schema):
+    begin_date = ma.fields.DateTime(data_key="begin-date")
+    end_date = ma.fields.DateTime(data_key="end-date")
+    next_cursor = ma.fields.Str(data_key="next-page-cursor")
+
+
+class TransactionItemResponseSchema(ma.Schema):
+    id = ma.fields.Str(data_key="idTransacao")
+    account_id = ma.fields.Str(data_key="idConta")
+    value = ma.fields.Number(data_key="valor")
+    created_at = ma.fields.Str(data_key="dataTransacao")
+
+
+class ListTransactionsResponseSchema(ma.Schema):
+    items = ma.fields.List(
+        ma.fields.Nested(TransactionItemResponseSchema),
+        attribute="Items",
+    )
+    next_cursor = ma.fields.Str(data_key="nextCursor", attribute="LastEvaluatedKey")
