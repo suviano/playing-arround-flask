@@ -7,6 +7,7 @@ from boto3.dynamodb.conditions import Key
 from flask import abort
 
 
+# TODO turn into a singleton to avoid unnecessary connection initialization
 class DynamoResource:
     def __init__(self):
         localstack = os.environ["LOCALSTACK"]
