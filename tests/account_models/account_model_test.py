@@ -26,7 +26,7 @@ class TestAccountBalanceScenarios(unittest.TestCase):
         mock_uuid.uuid4.return_value = str(newid)
         mock_resource_instance = mock_resource.return_value
 
-        current_date = dt.datetime.now()
+        current_date = dt.datetime.now(dt.timezone.utc)
         mock_datetime.datetime.now.return_value = current_date
 
         account_id = Account.add("321", d.Decimal("54551"), d.Decimal("500"), True, 33)

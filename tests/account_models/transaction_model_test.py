@@ -20,7 +20,7 @@ class TestAccountBalanceScenarios(unittest.TestCase):
         mock_uuid.uuid4.return_value = str(newid)
         mock_resource_instance = mock_resource.return_value
 
-        current_date = dt.datetime.now()
+        current_date = dt.datetime.now(dt.timezone.utc)
 
         transaction_id = Transaction.add("321", d.Decimal("54551"), current_date)
 
@@ -42,7 +42,7 @@ class TestAccountBalanceScenarios(unittest.TestCase):
         mock_uuid.uuid4.return_value = str(newid)
         mock_resource_instance = mock_resource.return_value
 
-        current_date = dt.datetime.now()
+        current_date = dt.datetime.now(dt.timezone.utc)
 
         transaction_id = Transaction.add("321", d.Decimal("-54551"), current_date)
 

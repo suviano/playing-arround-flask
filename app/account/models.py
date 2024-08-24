@@ -31,7 +31,7 @@ class Account:
         payload = {
             "id": str(uuid.uuid4()),
             "person_id": person_id,
-            "created_at": dt.datetime.now().isoformat(),
+            "created_at": dt.datetime.now(dt.timezone.utc).isoformat(),
             "balance": balance,
             "blocked": False,
             "daily_withdraw_limit": daily_withdraw_limit,
@@ -68,7 +68,7 @@ class Account:
                 ExpressionAttributeValues=expression_attr_values,
                 ConditionExpression=condition_expression,
             )
-            return dt.datetime.now()
+            return dt.datetime.now(dt.timezone.utc)
         except botocore.exceptions.ClientError as error:
             error_code = error.response["Error"]["Code"]
             if error_code == "ConditionalCheckFailedException":
@@ -225,7 +225,7 @@ class Transaction:
             index = TransactionIndex.withdraw
             key_expression = Key(index.hash_key).eq(account_id) & Key(
                 index.sort_key
-            ).eq(dt.datetime.now().strftime(date_format))
+            ).eq(dt.datetime.now(dt.timezone.utc).strftime(date_format))
             table = dynamodb_resource.table_resource(cls.table_name)
             return sum(
                 i["value"]
