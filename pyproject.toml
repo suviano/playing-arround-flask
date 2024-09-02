@@ -1,0 +1,38 @@
+[project]
+name = "playing-arround-flask"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Marcos Silvano", email = "marcossilvano@protonmail.com"},
+]
+dependencies = [
+    "flask",
+    "simplejson",
+    "marshmallow",
+    "marshmallow-oneofschema",
+    "boto3",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+test = [
+     "pytest",
+     "pytest-cov"
+]
+lint = [
+     "black",
+     "isort",
+     "mypy",
+     "ruff"
+]
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+extend-select = ["E501"]
+
+[tool.pdm]
+distribution = false

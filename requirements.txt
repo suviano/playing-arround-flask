@@ -1,5 +1,0 @@
-flask
-simplejson
-marshmallow
-marshmallow-oneofschema
-boto3
