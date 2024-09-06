@@ -57,7 +57,7 @@ CORS_ON=true
 LOCALSTACK=1
 ```
 
-4. After defining the variables just run `flask run --host 0.0.0.0` it will start the server in the post 5000
+4. After defining the variables just run `flask run` it will start the server in the post 5000
 
 > I added the folder sample.vscode with configuration files to run and debug using vscode. The project also need python plugin from microsoft to run
 

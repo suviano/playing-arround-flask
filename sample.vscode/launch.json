@@ -18,7 +18,7 @@
             "module": "flask",
             "envFile": "${workspaceFolder}/.env",
             "env": {
-                "FLASK_APP": "app.wsgi.py",
+                "FLASK_APP": "account_wsgi.wsgi.py",
                 "FLASK_ENV": "development",
                 "CORS_ON": "true",
                 "LOCALSTACK": "1"

@@ -9,7 +9,7 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        "venv": true,
+        "venv": true
     },
     "python.testing.pytestArgs": [
         "tests"
