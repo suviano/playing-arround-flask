@@ -9,7 +9,7 @@ import pytest
 
 @pytest.mark.usefixtures("client")
 class TestCreateAccountScenarios(unittest.TestCase):
-    mock_models_path = "app.account.views.models"
+    mock_models_path = "src.account.account.views.models"
 
     @mock.patch(mock_models_path)
     def test_not_call_create_person_when_id_informed(self, mock_models):

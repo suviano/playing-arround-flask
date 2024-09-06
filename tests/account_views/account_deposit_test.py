@@ -7,7 +7,7 @@ import pytest
 
 @pytest.mark.usefixtures("client")
 class TestAccountDepositScenarios(unittest.TestCase):
-    mock_models_path = "app.account.views.models"
+    mock_models_path = "src.account.account.views.models"
 
     request_path = "/account/{}/deposit"
 

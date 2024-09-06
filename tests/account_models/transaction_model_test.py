@@ -6,12 +6,12 @@ from unittest import mock
 
 from botocore.exceptions import ClientError
 
-from app.account.models import Transaction, date_format
+from src.account.account.models import Transaction, date_format
 
 
 class TestAccountBalanceScenarios(unittest.TestCase):
-    mock_resource_path = "app.account.models.DynamoResource"
-    mock_uuid_path = "app.account.models.uuid"
+    mock_resource_path = "src.account.account.models.DynamoResource"
+    mock_uuid_path = "src.account.account.models.uuid"
 
     @mock.patch(mock_resource_path)
     @mock.patch(mock_uuid_path)

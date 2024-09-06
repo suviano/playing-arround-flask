@@ -7,11 +7,11 @@ import pytest
 
 @pytest.mark.usefixtures("client")
 class TestAccountBlockScenarios(unittest.TestCase):
-    mock_models_path = "app.account.views.models"
+    mock_models_path = "src.account.account.views.models"
 
     request_path = "/account/{}/block"
 
-    @mock.patch("app.account.views.models")
+    @mock.patch("src.account.account.views.models")
     def test_param_received_by_models(self, mock_models):
         mock_models.Account.block.return_value = None
         resp = self.client.patch(

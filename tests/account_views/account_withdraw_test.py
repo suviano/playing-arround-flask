@@ -8,7 +8,7 @@ import pytest
 
 @pytest.mark.usefixtures("client")
 class TestAccountWithdrawScenarios(unittest.TestCase):
-    mock_models_path = "app.account.views.models"
+    mock_models_path = "src.account.account.views.models"
 
     request_path = "/account/{}/withdraw"
 
@@ -37,7 +37,7 @@ class TestAccountWithdrawScenarios(unittest.TestCase):
 
         self.assertEqual(resp.status_code, HTTPStatus.FORBIDDEN)
 
-    @mock.patch("app.account.views.models")
+    @mock.patch("src.account.account.views.models")
     def test_withdraw_bigger_than_balance(self, mock_models):
         mock_models.Account.find_one_by_id.return_value = {
             "balance": 33,
@@ -53,7 +53,7 @@ class TestAccountWithdrawScenarios(unittest.TestCase):
             {"error": "withdrawa value greater than available in the account"},
         )
 
-    @mock.patch("app.account.views.models")
+    @mock.patch("src.account.account.views.models")
     def test_single_withdraw_bigger_than_daily_limit(self, mock_models):
         mock_models.Account.find_one_by_id.return_value = {
             "balance": 100,
@@ -69,7 +69,7 @@ class TestAccountWithdrawScenarios(unittest.TestCase):
             {"error": "It is not possible to carry out the withdraw. Limit reached."},
         )
 
-    @mock.patch("app.account.views.models")
+    @mock.patch("src.account.account.views.models")
     def test_withdraw_smaller_than_daily_but_smaller_than_available(self, mock_models):
         mock_models.Account.find_one_by_id.return_value = {
             "balance": 100,
@@ -87,7 +87,7 @@ class TestAccountWithdrawScenarios(unittest.TestCase):
             },
         )
 
-    @mock.patch("app.account.views.models")
+    @mock.patch("src.account.account.views.models")
     def test_withdraw_executed_success_fully(self, mock_models):
         mock_models.Account.find_one_by_id.return_value = {
             "balance": 100,

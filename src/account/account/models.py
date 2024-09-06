@@ -8,7 +8,7 @@ import botocore
 from boto3.dynamodb.conditions import Key
 from flask import abort, jsonify, make_response
 
-from app.core.aws.dynamodb import DynamoResource
+from src.account.core.aws.dynamodb import DynamoResource
 
 date_format = "%Y-%m-%d"
 
@@ -56,11 +56,13 @@ class Account:
         expression_attr_values = {":balance": value, ":blocked": False}
         condition_expression = "#blocked = :blocked"
         if withdraw_operation:
-            condition_expression = f"{condition_expression} And #balance > :balance"
+            condition_expression = (condition_expression +
+                                    " And #balance > :balance")
         try:
             dynamodb_resource.table_resource(cls.table_name).update_item(
                 Key={"id": account_id},
-                UpdateExpression=f"SET #balance = #balance {operator} :balance",
+                UpdateExpression=("SET #balance = #balance "
+                                  f"{operator} :balance"),
                 ExpressionAttributeNames={
                     "#balance": "balance",
                     "#blocked": "blocked",
@@ -241,7 +243,8 @@ class Transaction:
 
 class Person:
     """
-    Not a column of account with the excuse that a person my have multiple accounts
+    Not a column of account with the excuse that a
+    person my have multiple accounts
     """
 
     table_name = "person"

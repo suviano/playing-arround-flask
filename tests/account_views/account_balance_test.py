@@ -7,11 +7,11 @@ import pytest
 
 @pytest.mark.usefixtures("client")
 class TestAccountBalanceScenarios(unittest.TestCase):
-    mock_models_path = "app.account.views.models"
+    mock_models_path = "src.account.account.views.models"
 
     request_path = "/account/{}/balance"
 
-    @mock.patch("app.account.views.models")
+    @mock.patch("src.account.account.views.models")
     def test_balance_account_not_found(self, mock_models):
         mock_models.Account.find_one_by_id.return_value = None
         resp = self.client.get(self.request_path.format("3333"))
@@ -19,7 +19,7 @@ class TestAccountBalanceScenarios(unittest.TestCase):
         self.assertEqual(resp.status_code, HTTPStatus.NOT_FOUND)
         self.assertEqual(resp.json, {"error": "Account not found"})
 
-    @mock.patch("app.account.views.models")
+    @mock.patch("src.account.account.views.models")
     def test_balance_withdraw_limit_positive(self, mock_models):
         mock_models.Account.find_one_by_id.return_value = {
             "daily_withdraw_limit": 33,
@@ -35,7 +35,7 @@ class TestAccountBalanceScenarios(unittest.TestCase):
             {"bloqueado": False, "limiteSaqueDisponivel": 31, "saldo": 44.554554},
         )
 
-    @mock.patch("app.account.views.models")
+    @mock.patch("src.account.account.views.models")
     def test_balance_withdraw_limit_reached(self, mock_models):
         mock_models.Account.find_one_by_id.return_value = {
             "daily_withdraw_limit": 400,
@@ -51,7 +51,7 @@ class TestAccountBalanceScenarios(unittest.TestCase):
             {"bloqueado": False, "limiteSaqueDisponivel": 0, "saldo": 44.554554},
         )
 
-    @mock.patch("app.account.views.models")
+    @mock.patch("src.account.account.views.models")
     def test_balance_withdraw_limit_reached_and_surpassed(self, mock_models):
         mock_models.Account.find_one_by_id.return_value = {
             "daily_withdraw_limit": 400,

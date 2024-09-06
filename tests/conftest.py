@@ -1,6 +1,6 @@
 import pytest
 
-from app import wsgi
+from src.account import wsgi
 
 
 @pytest.fixture

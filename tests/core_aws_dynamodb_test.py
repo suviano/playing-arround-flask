@@ -3,11 +3,11 @@ from unittest import mock
 
 from botocore.exceptions import ClientError
 
-from app.core.aws.dynamodb import DynamoResource
+from src.account.core.aws.dynamodb import DynamoResource
 
 
 class TestDynamodbResource(unittest.TestCase):
-    mock_path = "app.core.aws.dynamodb"
+    mock_path = "src.account.core.aws.dynamodb"
 
     @mock.patch.dict(
         f"{mock_path}.os.environ", {"LOCALSTACK": "1", "FLASK_ENV": "development"}

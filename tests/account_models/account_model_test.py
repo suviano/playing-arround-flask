@@ -9,14 +9,14 @@ import pytest
 from botocore.exceptions import ClientError
 from werkzeug.exceptions import HTTPException
 
-from app.account.models import Account
+from src.account.account.models import Account
 
 
 @pytest.mark.usefixtures("client")
 class TestAccountBalanceScenarios(unittest.TestCase):
-    mock_resource_path = "app.account.models.DynamoResource"
-    mock_uuid_path = "app.account.models.uuid"
-    mock_datetime_path = "app.account.models.dt"
+    mock_resource_path = "src.account.account.models.DynamoResource"
+    mock_uuid_path = "src.account.account.models.uuid"
+    mock_datetime_path = "src.account.account.models.dt"
 
     @mock.patch(mock_resource_path)
     @mock.patch(mock_uuid_path)

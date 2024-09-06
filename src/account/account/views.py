@@ -6,9 +6,8 @@ from http import HTTPStatus
 
 from flask import Blueprint, abort, jsonify, make_response, request
 
-from app.account import models
-from app.account import serializers as ser
-from app.core.decorators import json_consumer, query_to_json
+from src.account.account import serializers as ser, models
+from src.account.core.decorators import json_consumer, query_to_json
 
 bp = Blueprint("account", __name__)
 
@@ -73,11 +72,17 @@ def abort_blocked(f):
 def register_new_transaction(
     account_id: str, transaction_date: dt.datetime, value: d.Decimal
 ):
-    transaction_id = models.Transaction.add(account_id, value, transaction_date)
+    transaction_id = models.Transaction.add(
+        account_id, value, transaction_date
+    )
     return (
         "",
         HTTPStatus.CREATED,
-        {"Content-Location": f"/account/{account_id}/transaction/{transaction_id}"},
+        {
+            "Content-Location": (
+                f"/account/{account_id}/transaction/{transaction_id}"
+            )
+        },
     )
 
 
@@ -89,7 +94,9 @@ def register_new_transaction(
 @json_consumer
 def deposito_em_conta(account_id: str, account: dict):
     deposit_value = ser.DepositSchema().loads(request.data)
-    transaction_date = models.Account.deposit_into(account_id, deposit_value["value"])
+    transaction_date = models.Account.deposit_into(
+        account_id, deposit_value["value"]
+    )
     return register_new_transaction(
         account_id, transaction_date, deposit_value["value"]
     )
@@ -98,16 +105,21 @@ def deposito_em_conta(account_id: str, account: dict):
 @bp.route("/<string:account_id>/balance", methods=["GET"])
 @get_account_id("account_id")
 def get_balance(account_id: str, account: dict):
-    withdrawn_today = models.Transaction.find_withdraw_limit_available(account_id)
+    withdrawn_today = models.Transaction.find_withdraw_limit_available(
+        account_id
+    )
     withdraw_available = account["daily_withdraw_limit"] - withdrawn_today
-    account["withdraw_available"] = withdraw_available if withdraw_available > 0 else 0
+    account["withdraw_available"] = (
+        withdraw_available if withdraw_available > 0 else 0
+    )
     return ser.BalanceResponse().dump(account)
 
 
 @bp.route("/<string:account_id>/block", methods=["PATCH"])
 @json_consumer
 def block_account(account_id: str):
-    """This endpoint does not use the `get_account_id` because it would make an unnecessary request to the database"""
+    """This endpoint does not use the `get_account_id` because it would make
+    an unnecessary request to the database"""
     payload = ser.BlockAccountSchema().loads(request.data)
     models.Account.block(account_id, payload["block"])
     return "", HTTPStatus.NO_CONTENT
@@ -131,14 +143,18 @@ def withdraw(account_id: str, account: str):
         error_msg = f"{error_msg}. Limit reached."
         return {"error": error_msg}, HTTPStatus.FORBIDDEN
 
-    reached_limit = models.Transaction.find_withdraw_limit_available(account_id)
+    reached_limit = models.Transaction.find_withdraw_limit_available(
+        account_id
+    )
     available_limit = daily_limit - reached_limit
     if withdraw_data["value"] > available_limit:
         available_msg = available_limit if available_limit > 0 else 0
         error_msg = f"{error_msg}. Withdraw available is R$ {available_msg}"
         return {"error": error_msg}, HTTPStatus.FORBIDDEN
 
-    transaction_date = models.Account.withdraw(account_id, withdraw_data["value"])
+    transaction_date = models.Account.withdraw(
+        account_id, withdraw_data["value"]
+    )
     return register_new_transaction(
         account_id, transaction_date, withdraw_data["value"] * -1
     )

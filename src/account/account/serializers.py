@@ -83,4 +83,5 @@ class ListTransactionsResponseSchema(ma.Schema):
         ma.fields.Nested(TransactionItemResponseSchema),
         attribute="Items",
     )
-    next_cursor = ma.fields.Str(data_key="nextCursor", attribute="LastEvaluatedKey")
+    next_cursor = ma.fields.Str(data_key="nextCursor",
+                                attribute="LastEvaluatedKey")
