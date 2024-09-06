@@ -14,7 +14,7 @@ bp = Blueprint("account", __name__)
 
 @bp.route("", methods=["POST"])
 @json_consumer
-def create_account():
+def create_account(*args, **kwargs):
     parsed_data = ser.CreateAccountSchema().loads(request.data)
     create_person = not parsed_data.get("person_id")
     if create_person:
@@ -26,7 +26,7 @@ def create_account():
         return (
             "",
             HTTPStatus.CREATED,
-            {"Content-Location": f"/account/{account_id}"},
+            {"Content-Location": f"{request.path}/{account_id}"},
         )
     except Exception:
         if create_person:

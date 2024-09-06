@@ -9,7 +9,7 @@ import pytest
 class TestAccountBlockScenarios(unittest.TestCase):
     mock_models_path = "src.account.account.views.models"
 
-    request_path = "/account/{}/block"
+    request_path = "/v1/account/{}/block"
 
     @mock.patch("src.account.account.views.models")
     def test_param_received_by_models(self, mock_models):

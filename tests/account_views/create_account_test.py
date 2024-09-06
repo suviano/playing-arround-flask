@@ -17,7 +17,7 @@ class TestCreateAccountScenarios(unittest.TestCase):
         mock_models.Account.add.return_value = "2"
 
         resp = self.client.post(
-            "/account",
+            "/v1/account",
             json={
                 "saldo": 3323.44551,
                 "flagAtivo": False,
@@ -28,7 +28,7 @@ class TestCreateAccountScenarios(unittest.TestCase):
         )
 
         self.assertEqual(resp.status_code, HTTPStatus.CREATED)
-        self.assertEqual(resp.headers["Content-Location"], "/account/2")
+        self.assertEqual(resp.headers["Content-Location"], "/v1/account/2")
         mock_models.Person.add.assert_not_called()
         mock_models.Account.add.assert_called_once_with(
             **{
@@ -46,7 +46,7 @@ class TestCreateAccountScenarios(unittest.TestCase):
         mock_models.Account.add.return_value = "2"
 
         resp = self.client.post(
-            "/account",
+            "/v1/account",
             json={
                 "saldo": 3323.44551,
                 "flagAtivo": False,
@@ -59,7 +59,7 @@ class TestCreateAccountScenarios(unittest.TestCase):
         )
 
         self.assertEqual(resp.status_code, HTTPStatus.CREATED)
-        self.assertEqual(resp.headers["Content-Location"], "/account/2")
+        self.assertEqual(resp.headers["Content-Location"], "/v1/account/2")
         mock_models.Person.add.assert_called_once_with(
             **{
                 "birth": dt.datetime(1900, 4, 4).date(),
@@ -80,7 +80,7 @@ class TestCreateAccountScenarios(unittest.TestCase):
     @mock.patch(mock_models_path)
     def test_content_type_must_be_json(self, mock_models):
         resp = self.client.post(
-            "/account", data=b"dasda", content_type="application/x-www-form-urlencoded"
+            "/v1/account", data=b"dasda", content_type="application/x-www-form-urlencoded"
         )
         self.assertEqual(resp.status_code, HTTPStatus.BAD_REQUEST)
         self.assertEqual(resp.json, {"error": "content-type must be application/json"})
@@ -93,7 +93,7 @@ class TestCreateAccountScenarios(unittest.TestCase):
             "Someone dropped coffee in the machine now everything is broken because it is!"
         )
         resp = self.client.post(
-            "/account",
+            "/v1/account",
             json={
                 "saldo": 3323.44551,
                 "flagAtivo": False,

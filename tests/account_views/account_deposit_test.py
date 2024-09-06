@@ -9,7 +9,7 @@ import pytest
 class TestAccountDepositScenarios(unittest.TestCase):
     mock_models_path = "src.account.account.views.models"
 
-    request_path = "/account/{}/deposit"
+    request_path = "v1/account/{}/deposit"
 
     @mock.patch(mock_models_path)
     def test_account_blocked(self, mock_models):
