@@ -80,10 +80,14 @@ class TestCreateAccountScenarios(unittest.TestCase):
     @mock.patch(mock_models_path)
     def test_content_type_must_be_json(self, mock_models):
         resp = self.client.post(
-            "/v1/account", data=b"dasda", content_type="application/x-www-form-urlencoded"
+            "/v1/account",
+            data=b"dasda",
+            content_type="application/x-www-form-urlencoded",
         )
         self.assertEqual(resp.status_code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(resp.json, {"error": "content-type must be application/json"})
+        self.assertEqual(
+            resp.json, {"error": "content-type must be application/json"}
+        )
         mock_models.Person.add.assert_not_called()
         mock_models.Account.add.assert_not_called()
 

@@ -9,7 +9,7 @@ import pytest
 class TestAccountBalanceScenarios(unittest.TestCase):
     mock_models_path = "src.account.account.views.models"
 
-    request_path = "/v1/account/{}/balance"
+    request_path = "/account/{}/balance"
 
     @mock.patch("src.account.account.views.models")
     def test_balance_account_not_found(self, mock_models):
@@ -32,7 +32,11 @@ class TestAccountBalanceScenarios(unittest.TestCase):
         self.assertEqual(resp.status_code, HTTPStatus.OK)
         self.assertEqual(
             resp.json,
-            {"bloqueado": False, "limiteSaqueDisponivel": 31, "saldo": 44.554554},
+            {
+                "bloqueado": False,
+                "limiteSaqueDisponivel": 31,
+                "saldo": 44.554554,
+            },
         )
 
     @mock.patch("src.account.account.views.models")
@@ -42,13 +46,19 @@ class TestAccountBalanceScenarios(unittest.TestCase):
             "balance": "44.554554",
             "blocked": False,
         }
-        mock_models.Transaction.find_withdraw_limit_available.return_value = 400
+        mock_models.Transaction.find_withdraw_limit_available.return_value = (
+            400
+        )
         resp = self.client.get(self.request_path.format("3333"))
 
         self.assertEqual(resp.status_code, HTTPStatus.OK)
         self.assertEqual(
             resp.json,
-            {"bloqueado": False, "limiteSaqueDisponivel": 0, "saldo": 44.554554},
+            {
+                "bloqueado": False,
+                "limiteSaqueDisponivel": 0,
+                "saldo": 44.554554,
+            },
         )
 
     @mock.patch("src.account.account.views.models")
@@ -58,11 +68,17 @@ class TestAccountBalanceScenarios(unittest.TestCase):
             "balance": "44.554554",
             "blocked": False,
         }
-        mock_models.Transaction.find_withdraw_limit_available.return_value = 500
+        mock_models.Transaction.find_withdraw_limit_available.return_value = (
+            500
+        )
         resp = self.client.get(self.request_path.format("3333"))
 
         self.assertEqual(resp.status_code, HTTPStatus.OK)
         self.assertEqual(
             resp.json,
-            {"bloqueado": False, "limiteSaqueDisponivel": 0, "saldo": 44.554554},
+            {
+                "bloqueado": False,
+                "limiteSaqueDisponivel": 0,
+                "saldo": 44.554554,
+            },
         )

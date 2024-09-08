@@ -3,7 +3,7 @@ info:
   title: Account management
   version: "1.0"
 servers:
-  - url: http://???/v1
+  - url: http://localhost/v1
 
 components:
   schemas:
@@ -30,12 +30,6 @@ components:
         dataNascimento:
           type: string
           format: date
-    idPessoa:
-      allOf:
-        - $ref: "#/components/schemas/create_person"
-        - properties:
-            id:
-              type: integer
     account_existing_person:
       required:
         - idPessoa
@@ -85,11 +79,6 @@ components:
         bloqueado:
           type: boolean
           example: true
-    account_not_found:
-      properties:
-        error:
-          type: string
-          example: Account not found
 paths:
   /account:
     post:
@@ -116,7 +105,7 @@ paths:
           description: requisição invalida
         "500":
           description: ocorreu um erro no servidor
-  /account/<account_id>/deposit:
+  /account/{account_id}/deposit:
     post:
       summary: Executa uma transação para depósito
       parameters:
@@ -156,7 +145,7 @@ paths:
           description: conta não encontrada
         "500":
           description: ocorreu um erro no servidor
-  /account/<account_id>/balance/:
+  /account/{account_id}/balance/:
     get:
       summary: Consulta de saldo em determinada conta
       parameters:
@@ -177,7 +166,7 @@ paths:
           description: conta não encontrada
         "500":
           description: ocorreu um erro no servidor
-  /account/<account_id>/withdraw:
+  /account/{account_id}/withdraw:
     post:
       summary: saque em uma conta
       parameters:
@@ -194,7 +183,7 @@ paths:
           description: Operação não foi autorizada
         "500":
           description: ocorreu um erro no servidor
-  /account/<account_id>/block:
+  /account/{account_id}/block:
     patch:
       summary: bloqueio de uma conta
       parameters:
@@ -213,7 +202,7 @@ paths:
           description: conta nao encontrada
         "500":
           description: ocorreu um erro no servidor
-  /account/<account_id>/transactions:
+  /account/{account_id}/transactions:
     get:
       description: extrato das transações da conta
       summary: extrato de transacoes feita por uma conta

@@ -14,7 +14,7 @@ bp = Blueprint("account", __name__)
 
 @bp.route("", methods=["POST"])
 @json_consumer
-def create_account(*args, **kwargs):
+def create_account():
     parsed_data = ser.CreateAccountSchema().loads(request.data)
     create_person = not parsed_data.get("person_id")
     if create_person:
