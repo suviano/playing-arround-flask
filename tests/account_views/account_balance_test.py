@@ -9,7 +9,7 @@ import pytest
 class TestAccountBalanceScenarios(unittest.TestCase):
     mock_models_path = "src.account.account.views.models"
 
-    request_path = "/account/{}/balance"
+    request_path = "/v1/account/{}/balance"
 
     @mock.patch("src.account.account.views.models")
     def test_balance_account_not_found(self, mock_models):
