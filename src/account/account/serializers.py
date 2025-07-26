@@ -29,7 +29,7 @@ class CreateAccountSchema(ma.Schema):
 
 def raise_for_negative_or_zero_value(value: d.Decimal):
     if value <= 0:
-        raise abort(
+        abort(
             make_response(
                 jsonify(error="Depósito aceita penas valores positivos"),
                 HTTPStatus.BAD_REQUEST,

@@ -1,7 +1,7 @@
 [project]
 name = "playing-arround-flask"
 version = "0.1.0"
-description = "Default template for PDM package"
+description = ""
 authors = [
     {name = "Marcos Silvano", email = "marcossilvano@protonmail.com"},
 ]

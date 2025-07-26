@@ -1,9 +1,9 @@
-from http import HTTPStatus
 from dataclasses import asdict
+from http import HTTPStatus
 
 from flask import Blueprint
 
-from src.account.health_check.serializers import HealthCheck, Check
+from src.account.health_check.serializers import Check, HealthCheck
 
 bp = Blueprint("health-check", __name__)
 

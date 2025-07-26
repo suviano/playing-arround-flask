@@ -33,7 +33,7 @@ def create_account():
             logging.error("Problem saving the account. But person created")
             # delete person if created now
 
-        raise abort(
+        abort(
             make_response(
                 jsonify(error="Problem creating the account"),
                 HTTPStatus.INTERNAL_SERVER_ERROR,

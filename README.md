@@ -3,7 +3,7 @@
 The project needs python 3.7+, virtualenv packages, docker and docker-compose (you can translate the localstack-infra.yml to a docker start if you don't want to run this way).
 
 Flask is being used as the server framework.
-Marhsmallow to serialize the input and output from the rest.
+Marshmallow to serialize the input and output from the rest.
 The database used was `dynamodb` (I was going to use postgres with sqlalchemy, but I saw you guys use a lot of thing from aws).
 
 ## Structure

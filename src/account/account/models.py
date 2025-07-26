@@ -3,8 +3,9 @@ import decimal as d
 import uuid
 from dataclasses import dataclass
 from http import HTTPStatus
+from typing import Optional
 
-import botocore
+import botocore.exceptions
 from boto3.dynamodb.conditions import Key
 from flask import abort, jsonify, make_response
 
@@ -50,7 +51,7 @@ class Account:
     @classmethod
     def _balance_operation(
         cls, account_id: str, value: d.Decimal, operator: str = "+"
-    ) -> dt.datetime:
+    ):
         dynamodb_resource = DynamoResource()
         withdraw_operation = operator == "-"
         expression_attr_values = {":balance": value, ":blocked": False}
@@ -80,7 +81,7 @@ class Account:
                     if withdraw_operation
                     else ""
                 )
-                raise abort(
+                abort(
                     make_response(
                         jsonify(error=error_msg),
                         HTTPStatus.FORBIDDEN,
@@ -89,7 +90,7 @@ class Account:
             dynamodb_resource.handle_error(error)
 
     @classmethod
-    def deposit_into(cls, account_id: str, value: d.Decimal) -> dt.datetime:
+    def deposit_into(cls, account_id: str, value: d.Decimal):
         return cls._balance_operation(account_id, value, cls.SUM)
 
     @classmethod
@@ -107,7 +108,7 @@ class Account:
         except botocore.exceptions.ClientError as error:
             error_code = error.response["Error"]["Code"]
             if error_code == "ValidationException":
-                raise abort(
+                abort(
                     make_response(
                         jsonify(error="Account not found"),
                         HTTPStatus.NOT_FOUND,
@@ -192,9 +193,9 @@ class Transaction:
     def find_by_account_id(
         cls,
         account_id: str,
-        begin_date: dt.datetime = None,
-        end_date: dt.datetime = None,
-        next_cursor: str = None,
+        begin_date: Optional[dt.datetime] = None,
+        end_date: Optional[dt.datetime] = None,
+        next_cursor: Optional[str] = None,
     ):
         dynamodb_resource = DynamoResource()
         try:

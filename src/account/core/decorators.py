@@ -9,7 +9,7 @@ def json_consumer(f):
     @functools.wraps(f)
     def decorated_function(*args, **kwargs):
         if "application/json" not in request.headers.get("Content-Type", ""):
-            raise abort(
+            abort(
                 make_response(
                     jsonify(error="content-type must be application/json"),
                     HTTPStatus.BAD_REQUEST,
